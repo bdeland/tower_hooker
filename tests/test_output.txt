@@ -1,0 +1,3 @@
+BLUESTACKS_ADB_PATH: C:\Program Files\BlueStacks_nxt\HD-Adb.exe
+FRIDA_SERVER_DIR: C:\Users\delan\Desktop\tower_hooker\frida_server
+DATABASE_PATH: C:\Users\delan\Desktop\tower_hooker\data\tower_data.db

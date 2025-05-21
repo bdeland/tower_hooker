@@ -1,0 +1,46 @@
+# Ignore frida_server directory
+/frida_server
+
+# Ignore tower_data.db in data directory
+/data
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore general cache files
+*.cache
+.cache/
+
+# Ignore other system files
+.DS_Store
+Thumbs.db 
+
+# Ignore cursor stuff
+/.cursor
+/memory
+scripts/node_modules/.package-lock.json
+scripts/node_modules/.bin/frida-il2cpp-bridge
+scripts/node_modules/.bin/frida-il2cpp-bridge.cmd
+scripts/node_modules/.bin/frida-il2cpp-bridge.ps1
+scripts/node_modules/frida-il2cpp-bridge/LICENSE.md
+scripts/node_modules/frida-il2cpp-bridge/package.json
+scripts/node_modules/frida-il2cpp-bridge/README.md
+scripts/node_modules/frida-il2cpp-bridge/cli/main.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/__init__.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/app.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/dump/__init__.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/dump/agent.js
+scripts/node_modules/frida-il2cpp-bridge/cli/src/dump/command.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/dump/dumper.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/dump/models.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/utils/__init__.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/utils/app.py
+scripts/node_modules/frida-il2cpp-bridge/cli/src/utils/io.py
+scripts/node_modules/frida-il2cpp-bridge/dist/index.d.ts
+scripts/node_modules/frida-il2cpp-bridge/dist/index.js
+scripts/node_modules/frida-il2cpp-bridge/dist/index.js.map
+scripts/package-lock.json
+scripts/package.json

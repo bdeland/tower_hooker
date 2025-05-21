@@ -1,0 +1,1 @@
+print("Hello from simple_test.py in frida_tower_logger") 
