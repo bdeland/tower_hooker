@@ -1,0 +1,32 @@
+{
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "name": "DuckDB",
+            "accessMode": "Read Only",
+            "previewLimit": 50,
+            "driver": "DuckDB",
+            "databaseFilePath": "C:\\Users\\delan\\Desktop\\tower_hooker\\db\\logs.duckdb"
+        }
+    ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "yaml.schemas": {
+        "config/db_schema/db_schema_meta.json": "config/db_schema/*.yaml"
+    },
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "python.testing.debugPort": 5678,
+    "python.terminal.activateEnvironment": true,
+    "python.testing.cwd": "${workspaceFolder}"
+}

@@ -1,0 +1,41 @@
+game_version: "26.2.28"
+description: "Memory offsets for The Tower game, derived from previous hook script."
+
+defaults:
+  rva_base_module: "GameAssembly.dll"
+
+function_rvas:
+  items:
+    - name: "MAIN_START_NEW_ROUND_RVA"
+      value: "0x13B8BB4"
+      notes: "Main.StartNewRound"
+    - name: "MAIN_GAME_OVER_RVA"
+      value: "0x13B74C8"
+      notes: "Main.GameOver"
+    - name: "MAIN_NEW_WAVE_RVA"
+      value: "0x13BB0B0"
+      notes: "Main.NewWave"
+
+class_field_offsets:
+  - class_name: "Main"
+    items:
+      - name: "MAIN_CASH_OFFSET"
+        value: "0x108"
+        data_type_hint: "double" 
+        notes: "Cash in Main class."
+      - name: "MAIN_COINS_OFFSET"
+        value: "0x110"
+        data_type_hint: "double"
+        notes: "Coins in Main class."
+      - name: "MAIN_CURRENT_TIER_OFFSET"
+        value: "0x5A8"
+        data_type_hint: "int"
+        notes: "Current tier in Main class."
+      - name: "MAIN_CURRENT_WAVE_OFFSET"
+        value: "0x148"
+        data_type_hint: "int"
+        notes: "Current wave in Main class."
+      - name: "MAIN_GEMS_OFFSET"
+        value: "0x118"
+        data_type_hint: "int"
+        notes: "Gems in Main class."

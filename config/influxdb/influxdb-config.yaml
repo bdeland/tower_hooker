@@ -1,0 +1,107 @@
+schema_version: "0.0.2"
+schema_release_date: "2025-05-27"
+description: |
+  Schema definition for tower_hooker analytics InfluxDB. 
+  Uses YAML for improved readability and maintainability.
+  
+  DESIGN INTENT: Clean separation of logs vs structured data
+  - Logs → Loki (system logs, application logs, etc.)
+  - Structured Data → InfluxDB (metrics, events, metadata)
+influxdb_version_compatibility: "2.x (Flux)"
+
+measurements:
+  round_metadata:
+    description: |
+      Summary information and one-time snapshots for each round. 
+      InfluxDB time is timestamp_start_round.
+    tags:
+      round_id:
+        display_name: "Round ID"
+        data_type: string
+        description: |
+          UUID for the round. Primary key for joining all round-related data.
+        example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      tier:
+        display_name: "Tier"
+        data_type: string
+        description: Game tier selected for the round, e.g., 1, 10.
+        example: "5"
+      game_version:
+        display_name: "Game Version"
+        data_type: string
+        description: Version of the "The Tower" game client.
+        example: "26.2.28"
+    fields:
+      timestamp_start_round:
+        display_name: "Round Start Timestamp"
+        data_type: integer
+        unit: unix_nanoseconds_utc
+        description: |
+          Timestamp of round start. 
+          Also used as the InfluxDB _time for this measurement point.
+        nullable: false
+      timestamp_end_round:
+        display_name: "Round End Timestamp"
+        data_type: integer
+        unit: unix_nanoseconds_utc
+        description: Timestamp of round end.
+        nullable: true
+
+  round_metrics_periodic:
+    description: |
+      Frequently captured time-series data during a round. 
+      InfluxDB time is capture_timestamp.
+    tags:
+      round_id:
+        display_name: "Round ID"
+        data_type: string
+        description: UUID for the round, linking to round_info.
+        example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    fields:
+      cash:
+        display_name: "Cash"
+        data_type: integer
+        description: "Current cash available to spend in the round."
+        nullable: false
+      coins:
+        display_name: "Coins"
+        data_type: integer
+        description: "Cumulative coins earned so far in this round (periodic snapshot)."
+        nullable: false
+      gems:
+        display_name: "Gems"
+        data_type: integer
+        description: "Current gems available to spend in the round."
+        nullable: false
+
+  round_events_wave:
+    description: |
+      Logs data captured at the start of each new wave. 
+      InfluxDB time is timestamp_wave_start.
+    tags:
+      round_id:
+        display_name: "Round ID"
+        data_type: string
+        description: UUID for the round.
+        example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    fields:
+      wave:
+        display_name: "Wave"
+        data_type: integer
+        description: "The wave number that has just started."
+        nullable: false
+      cash:
+        display_name: "Cash"
+        data_type: integer
+        description: "Current cash available to spend in the round."
+        nullable: false
+      coins:
+        display_name: "Coins"
+        data_type: integer
+        description: "Cumulative coins earned so far in this round (periodic snapshot)."
+        nullable: false
+      gems:
+        display_name: "Gems"
+        data_type: integer
+        description: "Current gems available to spend in the round."
+        nullable: false

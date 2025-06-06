@@ -1,0 +1,41 @@
+DATA_INGESTION:
+  GAME_EVENTS:
+    ENABLED: true
+  GAME_METRICS:
+    COLLECTION_INTERVAL_MS: 1000
+    ENABLED: true
+  ROUND_METADATA:
+    ENABLED: true
+DB_SCHEMA_FILE: config/influxdb/influxdb-config.yaml
+HOOK_SCRIPT_PATH: src/scripts/test_hook_script.js
+# Service timeout configurations (in seconds)
+services:
+  timeouts:
+    grafana: 60         # Grafana typically starts quickly
+    influxdb: 90        # InfluxDB may need more time for database initialization  
+    loki: 180           # Loki can take significantly longer to start, especially first time
+    default: 60         # Default timeout for other services
+frida:
+  default_script_path: C:/Users/delan/Desktop/tower_hooker/src/scripts/test_hook_script.js
+logging:
+  console:
+    enabled: true
+    log_level: "DEBUG"  # Set console log level to INFO (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    filters:
+      BLUESTACKS: true
+      DATABASE: true
+      FALLBACK_SYSTEM: true
+      FRIDA: true
+      LOGCAT: false
+      MAIN_APP: true
+      PSLIST: false
+      SYSTEM: true
+  # Background data collection controls - moved from .env to YAML for proper architecture
+  background_collection:
+    enable_logcat: false     # Enable Android logcat logging when BlueStacks connects
+    enable_pslist: false    # Enable Android process list logging when BlueStacks connects
+  file_fallback:
+    backup_count: 3
+    emergency_log_path: logs/emergency.json.log
+    loki_failure_log_path: logs/loki_fallback.json.log
+    max_size_mb: 10

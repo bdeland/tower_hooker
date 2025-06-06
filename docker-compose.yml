@@ -1,0 +1,82 @@
+services:
+  # InfluxDB for metrics (existing service)
+  influxdb:
+    image: influxdb:2.7
+    container_name: tower_hooker_influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${DOCKER_INFLUXDB_INIT_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=tower_hooker
+      - DOCKER_INFLUXDB_INIT_BUCKET=metrics
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    networks:
+      - tower_hooker_network
+
+  # Loki for log aggregation
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: tower_hooker_loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./config/loki/loki-config.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    networks:
+      - tower_hooker_network
+    restart: unless-stopped
+
+  # Promtail for log collection
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: tower_hooker_promtail
+    volumes:
+      - ./config/promtail/promtail-config.yml:/etc/promtail/config.yml
+      - ./logs:/var/log/tower_hooker
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - tower_hooker_network
+    depends_on:
+      - loki
+    restart: unless-stopped
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:10.1.0
+    container_name: tower_hooker_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${DOCKER_GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - INFLUXDB_TOKEN=${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN}
+      # Enable anonymous authentication
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - tower_hooker_network
+    depends_on:
+      - influxdb
+      - loki
+    restart: unless-stopped
+
+volumes:
+  influxdb_data:
+  influxdb_config:
+  loki_data:
+  grafana_data:
+
+networks:
+  tower_hooker_network:
+    driver: bridge 

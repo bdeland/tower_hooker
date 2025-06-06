@@ -1,0 +1,104 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # ============================================================================
+  # TOWER HOOKER UNIFIED DATA INGESTION SYSTEM
+  # ============================================================================
+  # 
+  # NOTE: The Tower Hooker application now uses the unified DataIngestionManager
+  # which sends logs DIRECTLY to Loki via the TowerHookerLokiHandler.
+  # 
+  # This means:
+  # - System logs (logcat, pslist, th_main_app, frida, etc.) → Direct to Loki
+  # - Game metrics → Direct to InfluxDB  
+  # - Game events → Direct to InfluxDB
+  # - Round metadata → Direct to InfluxDB
+  #
+  # Promtail is now only used for:
+  # 1. Emergency backup logs (if file logging is temporarily enabled)
+  # 2. External system logs not handled by DataIngestionManager
+  # 3. Docker container logs
+  # ============================================================================
+
+  # Docker container logs (not handled by DataIngestionManager)
+  - job_name: docker_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: tower_hooker
+          component: docker
+          source: docker_container
+          type: container_logs
+          __path__: /var/lib/docker/containers/*/*-json.log
+    pipeline_stages:
+      - json:
+          expressions:
+            output: log
+            stream: stream
+            time: time
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+      - output:
+          source: output
+
+  # Emergency backup logs (only active if file logging is temporarily enabled)
+  - job_name: emergency_backup_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: tower_hooker
+          component: emergency_backup
+          source: file_backup
+          type: emergency
+          __path__: /var/log/tower_hooker/emergency/*.log
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            message: message
+            level: level
+            source: source
+            component: component
+      - labels:
+          level:
+          source:
+          component:
+      - timestamp:
+          source: timestamp
+          format: RFC3339
+
+# ============================================================================
+# MIGRATION COMPLETE NOTICE
+# ============================================================================
+#
+# The following legacy configurations have been REMOVED because the unified
+# data ingestion system now handles all log routing:
+#
+# REMOVED:
+# - tower_hooker_app_backup (logs go directly to Loki)
+# - tower_hooker_database_backup (logs go directly to Loki)  
+# - tower_hooker_system_backup (logs go directly to Loki)
+# - tower_hooker_schema_backup (logs go directly to Loki)
+# - tower_hooker_frida_backup (logs go directly to Loki)
+# - tower_hooker_pslist_legacy (logs go directly to Loki)
+# - tower_hooker_logcat_legacy (logs go directly to Loki)
+#
+# All these log sources now use the DataIngestionManager with direct Loki
+# integration via TowerHookerLokiHandler, providing:
+# - Better performance (no file I/O)
+# - Consistent source tagging
+# - Real-time log streaming
+# - Proper structured data handling
+#
+# ============================================================================ 

@@ -1,0 +1,101 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Tower Hooker DB Schema Definition",
+    "description": "Schema for the database_schema_vX.Y.Z.yaml file. Enforces display_name for tags and fields.",
+    "type": "object",
+    "properties": {
+      "schema_version": {
+        "type": "string",
+          "pattern": "^([1-9]\\d?|0)\\.(([1-9]\\d?)|0)\\.(([1-9]\\d?)|0)$",
+          "description": "Semantic version of this schema definition file (format: XX.XX.XX where X is a digit 0-9)."
+      },
+      "schema_release_date": {
+        "type": "string",
+        "format": "date",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "description": "Date of release of this schema definition file (YYYY-MM-DD format)."
+      },
+      "description": {
+        "type": "string",
+        "description": "Overall description of the database schema's purpose."
+      },
+      "influxdb_version_compatibility": {
+        "type": "string",
+        "description": "InfluxDB version this schema is intended for (e.g., '2.x (Flux)')."
+      },
+      "measurements": {
+        "type": "object",
+        "description": "Container for all InfluxDB measurement definitions.",
+        "patternProperties": {
+          "^[a-zA-Z0-9_]+$": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Description of the measurement's purpose."
+              },
+              "tags": {
+                "type": "object",
+                "description": "Definition of tags for this measurement.",
+                "patternProperties": {
+                  "^[a-zA-Z0-9_]+$": {
+                    "type": "object",
+                    "properties": {
+                      "data_type": { "type": "string", "description": "Data type of the tag (usually 'string' for InfluxDB tags)." },
+                      "description": { "type": "string", "description": "Detailed description of the tag." },
+                      "display_name": { "type": "string", "description": "User-friendly display name for this tag." },
+                      "example": { "type": ["string", "number", "boolean"], "description": "Example value for the tag." },
+                      "nullable": { "type": "boolean", "description": "Indicates if this tag can be absent (true) or must be present (false). InfluxDB tags are always present if a series exists for them, but this can guide application logic." }
+                    },
+                    "required": [ 
+                      "data_type",
+                      "description",
+                      "display_name"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "fields": {
+                "type": "object",
+                "description": "Definition of fields for this measurement.",
+                "patternProperties": {
+                  "^[a-zA-Z0-9_]+$": { 
+                    "type": "object",
+                    "properties": {
+                      "data_type": { "type": "string", "description": "Data type of the field (e.g., 'integer', 'float', 'string', 'boolean', 'json_string')." },
+                      "description": { "type": "string", "description": "Detailed description of the field." },
+                      "display_name": { "type": "string", "description": "User-friendly display name for this field." },
+                      "unit": { "type": "string", "description": "Unit of measurement if applicable (e.g., 'unix_nanoseconds_utc', 'seconds', 'multiplier')." },
+                      "example": { "type": ["string", "number", "boolean"], "description": "Example value for the field." },
+                      "nullable": { "type": "boolean", "description": "Indicates if this field can have a null value (true) or must always have a value (false)." }
+                    },
+                    "required": [ 
+                      "data_type",
+                      "description",
+                      "display_name"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "required": [
+              "description",
+              "tags",
+              "fields"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "required": [
+      "schema_version",
+      "schema_release_date",
+      "description",
+      "influxdb_version_compatibility",
+      "measurements"
+    ],
+    "additionalProperties": false
+  }
